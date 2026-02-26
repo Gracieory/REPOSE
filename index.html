@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#fff8fb" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="REPOSE" />
+  <title>Repose — Where Mood Meets Aesthetic</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --serif: "Cormorant Garamond", "Songti SC", Georgia, serif;
+      --ink: #1f2230;
+      --muted: rgba(31, 34, 48, 0.68);
+      --faint: rgba(31, 34, 48, 0.52);
+      --bg0: #fff8fb;
+      --bg1: #f6f2ff;
+      --glass: rgba(255, 255, 255, 0.55);
+      --glass2: rgba(255, 255, 255, 0.42);
+      --glass-edge: rgba(255, 255, 255, 0.75);
+      --line: rgba(31, 34, 48, 0.08);
+      --shadow-soft: 0 25px 50px -12px rgba(31, 34, 48, 0.12);
+      --shadow-float: 0 32px 64px -16px rgba(31, 34, 48, 0.14);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      font-family: var(--serif);
+      font-weight: 300;
+      color: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      transition: opacity 0.4s ease;
+      position: relative;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(1400px 900px at 12% 0%, rgba(255, 214, 232, 0.78), transparent 72%),
+        radial-gradient(1300px 850px at 88% 6%, rgba(191, 234, 255, 0.58), transparent 70%),
+        radial-gradient(1200px 900px at 70% 110%, rgba(201, 255, 233, 0.48), transparent 68%),
+        radial-gradient(1300px 950px at 24% 110%, rgba(207, 195, 255, 0.48), transparent 70%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      background-size: 120% 120%;
+      background-position: 0% 0%;
+      animation: bgFlow 18s ease-in-out infinite;
+    }
+    @keyframes bgFlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 50% 50%; }
+    }
+    body.fade-out { opacity: 0; }
+
+    .main {
+      text-align: center;
+      max-width: 28rem;
+      margin: 0 auto;
+      outline: none;
+    }
+    .main:focus {
+      outline: none;
+    }
+    .logo {
+      display: inline-block;
+      font-size: 2.75rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 2.5rem;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 240, 248, 0.98) 0%,
+        rgba(255, 220, 238, 0.95) 35%,
+        rgba(255, 200, 228, 0.92) 70%,
+        rgba(248, 180, 218, 0.9) 100%
+      );
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    .headline {
+      font-size: 1.5rem;
+      line-height: 1.35;
+      font-weight: 300;
+      margin: 0 0 0.75rem;
+      color: var(--ink);
+    }
+    .tagline {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--muted);
+      margin: 0 0 1.5rem;
+      letter-spacing: 0.01em;
+    }
+    .btnWrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.65rem 1.6rem;
+      font-family: var(--serif);
+      font-size: 0.9375rem;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: linear-gradient(180deg, rgba(255,248,251,0.38), rgba(246,242,255,0.28));
+      border: 1px solid rgba(207,195,255,0.28);
+      border-radius: 2rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(31,34,48,0.05), inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+    .btn:hover {
+      border-color: rgba(207,195,255,0.4);
+      color: var(--ink);
+      background: linear-gradient(180deg, rgba(255,248,251,0.48), rgba(246,242,255,0.36));
+      box-shadow: 0 6px 24px rgba(31,34,48,0.06), inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+    .btn:focus,
+    .btn:focus-visible {
+      outline: none;
+      border-color: rgba(207,195,255,0.35);
+      color: var(--ink);
+      background: linear-gradient(180deg, rgba(255,248,251,0.38), rgba(246,242,255,0.28));
+      box-shadow: 0 4px 20px rgba(31,34,48,0.05), inset 0 1px 0 rgba(255,255,255,0.35);
+    }
+
+    /* Puffy：随机从左/右出现 → 飘回中间 → 停下；4 秒无点击入睡 */
+    .mascotWrap {
+      position: fixed;
+      left: 12%;
+      top: 28%;
+      width: 88px;
+      height: 88px;
+      z-index: 10;
+      cursor: pointer;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      opacity: 0;
+    }
+    .mascotWrap.enterFromLeft { animation: puffyEnterFromLeft 2.6s ease-out forwards; }
+    .mascotWrap.enterFromRight { animation: puffyEnterFromRight 2.6s ease-out forwards; }
+    .mascotWrap.idle,
+    .mascotWrap.idleFromLeft,
+    .mascotWrap.idleFromRight,
+    .mascotWrap.sleep,
+    .mascotWrap.stopped {
+      opacity: 1;
+    }
+    .mascotWrap.idleFromLeft {
+      animation: puffyDriftFromLeft 45s linear forwards;
+    }
+    .mascotWrap.idleFromRight {
+      animation: puffyDriftFromRight 45s linear forwards;
+    }
+    .mascotWrap.idleFromLeft svg,
+    .mascotWrap.idleFromRight svg {
+      animation: puffyIdle 8s ease-in-out infinite;
+    }
+    /* 停在 REPOSE 的 PO 上方 */
+    .mascotWrap.stopped {
+      left: 51%;
+      top: 21%;
+    }
+    .mascotWrap.stopped svg {
+      animation: puffyIdle 8s ease-in-out infinite;
+    }
+    .mascotWrap.sleep {
+      animation: puffyDriftSleep 22s linear infinite;
+    }
+    .mascotWrap.sleep svg {
+      animation: puffySleep 2.8s ease-in-out infinite;
+    }
+    .mascotWrap.tickle svg {
+      animation: mascotTickle 0.45s ease;
+    }
+    @keyframes puffyEnterFromLeft {
+      0% { opacity: 0; left: -12%; top: 28%; transform: scale(0.92); }
+      100% { opacity: 1; left: 12%; top: 28%; transform: scale(1); }
+    }
+    @keyframes puffyEnterFromRight {
+      0% { opacity: 0; left: 108%; top: 28%; transform: scale(0.92); }
+      100% { opacity: 1; left: 88%; top: 28%; transform: scale(1); }
+    }
+    /* 从左出发：飘到 REPOSE 的 PO 上方停下 */
+    @keyframes puffyDriftFromLeft {
+      0% { left: 12%; top: 28%; }
+      50% { left: 32%; top: 25%; }
+      100% { left: 51%; top: 21%; }
+    }
+    /* 从右出发：飘到 REPOSE 的 PO 上方停下 */
+    @keyframes puffyDriftFromRight {
+      0% { left: 88%; top: 28%; }
+      50% { left: 68%; top: 25%; }
+      100% { left: 51%; top: 21%; }
+    }
+    /* 睡觉时在 PO 上方小范围慢飘，不闪回 */
+    @keyframes puffyDriftSleep {
+      0%, 100% { left: 51%; top: 21%; }
+      25% { left: 49%; top: 19%; }
+      50% { left: 53%; top: 22%; }
+      75% { left: 51%; top: 23%; }
+    }
+    @keyframes puffyIdle {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-3px) scale(1.01); }
+    }
+    @keyframes puffySleep {
+      0%, 100% { transform: translateY(0) scale(0.98); }
+      50% { transform: translateY(-2px) scale(1); }
+    }
+    @keyframes mascotTickle {
+      0%, 100% { transform: translateY(0) scale(1); }
+      20% { transform: translateY(-2px) scale(1.08) translateX(-3px); }
+      40% { transform: translateY(0) scale(1.06) translateX(3px); }
+      60% { transform: translateY(-2px) scale(1.08) translateX(-2px); }
+      80% { transform: translateY(0) scale(1.04) translateX(2px); }
+    }
+    .mascotWrap:focus-visible { border-radius: 50%; box-shadow: 0 0 0 3px rgba(207, 195, 255, 0.4); }
+    .mascotWrap svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      filter: drop-shadow(0 4px 12px rgba(207, 195, 255, 0.25));
+      pointer-events: none;
+    }
+    .puffyZ {
+      position: absolute;
+      left: 50%;
+      top: -8px;
+      transform: translateX(-50%);
+      font-size: 18px;
+      line-height: 1;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .mascotWrap.sleep .puffyZ {
+      opacity: 0.9;
+      animation: puffyZ 1.8s ease-in-out infinite;
+    }
+    @keyframes puffyZ {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.6; }
+      50% { transform: translateX(-50%) translateY(-8px); opacity: 1; }
+    }
+    .mascotBubble {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      transform: translateY(-50%) translateX(-8px);
+      padding: 10px 14px;
+      border-radius: 16px;
+      font-size: 13px;
+      line-height: 1.35;
+      color: var(--ink);
+      background: linear-gradient(135deg, rgba(255,252,254,0.28), rgba(248,242,255,0.22));
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 4px 20px rgba(200,180,220,0.06);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      white-space: normal;
+      max-width: 260px;
+      min-width: 120px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+      margin-left: 6px;
+    }
+    .mascotBubble::after {
+      content: '';
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      border: 6px solid transparent;
+      border-right-color: rgba(248,242,255,0.45);
+
+    }
+    .mascotBubble.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(-50%) translateX(2px);
+    }
+
+    .foot {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.65rem 1rem;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 255, 255, 0.35) 100%
+      );
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--glass-edge);
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+    .foot a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .foot a:hover { color: var(--ink); }
+
+    .langWrap {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 20;
+    }
+    .langSeg {
+      display: flex;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .langSeg button {
+      border: 0;
+      background: transparent;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.16s ease;
+      outline: none;
+      font-family: inherit;
+    }
+    .langSeg button[aria-pressed="true"] {
+      background: var(--ink);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="langWrap" role="group" aria-label="Language">
+    <div class="langSeg">
+      <button type="button" id="langEN" aria-pressed="true">EN</button>
+      <button type="button" id="langZH" aria-pressed="false">中文</button>
+    </div>
+  </div>
+  <main class="main" tabindex="0">
+    <p class="logo" aria-hidden="true">Repose</p>
+    <h1 class="headline" id="headline">Where Mood Meets Aesthetic</h1>
+    <p class="tagline" id="tagline">Stillness in Style</p>
+    <div class="btnWrap">
+      <a href="quiz.html" class="btn" id="beginBtn">Begin Journey</a>
+      <a href="planner.html" class="btn" id="planBtn">Today's Plan</a>
+    </div>
+  </main>
+
+  <div class="mascotWrap" id="mascotWrap" role="button" tabindex="0" aria-label="云朵小精灵">
+    <span class="puffyZ" aria-hidden="true">😴</span>
+    <div class="mascotBubble" id="mascotBubble" aria-live="polite"></div>
+    <svg viewBox="0 0 100 90" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+        <defs>
+          <linearGradient id="cloudGradHome" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.94)" />
+            <stop offset="50%" stop-color="rgba(255,250,254,0.82)" />
+            <stop offset="100%" stop-color="rgba(248,240,255,0.68)" />
+          </linearGradient>
+          <linearGradient id="cloudEdgeHome" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.48)" />
+            <stop offset="100%" stop-color="rgba(218,208,235,0.35)" />
+          </linearGradient>
+          <radialGradient id="cloudGlowHome" cx="50%" cy="35%" r="55%">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.4)" />
+            <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+          </radialGradient>
+          <filter id="softEdgeHome" x="-15%" y="-15%" width="130%" height="130%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.35" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+        <g filter="url(#softEdgeHome)" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M50 12 C74 12 88 26 88 40 C88 46 84 50 78 52 C82 54 86 60 86 66 C86 76 70 84 50 84 C30 84 14 76 14 66 C14 60 18 54 22 52 C16 50 12 46 12 40 C12 26 26 12 50 12 Z" fill="url(#cloudGradHome)" stroke="url(#cloudEdgeHome)" stroke-width="0.95" />
+          <path d="M50 12 C74 12 88 26 88 40 C88 46 84 50 78 52 C82 54 86 60 86 66 C86 76 70 84 50 84 C30 84 14 76 14 66 C14 60 18 54 22 52 C16 50 12 46 12 40 C12 26 26 12 50 12 Z" fill="url(#cloudGlowHome)" opacity="0.5" />
+          <circle cx="22" cy="52" r="7" fill="url(#cloudGradHome)" stroke="url(#cloudEdgeHome)" stroke-width="0.9" />
+          <circle cx="78" cy="52" r="7" fill="url(#cloudGradHome)" stroke="url(#cloudEdgeHome)" stroke-width="0.9" />
+          <path d="M50 6 Q54 2 58 6 Q56 10 52 9 Q50 8 50 6 Z" fill="url(#cloudGradHome)" stroke="url(#cloudEdgeHome)" stroke-width="0.6" opacity="0.98" />
+        </g>
+        <ellipse cx="36" cy="32" rx="3.8" ry="5" fill="rgba(40,36,62,0.88)" transform="rotate(-8 36 32)" />
+        <circle cx="37" cy="30.8" r="1.2" fill="rgba(255,255,255,0.98)" />
+        <ellipse cx="64" cy="32" rx="3.8" ry="5" fill="rgba(40,36,62,0.88)" transform="rotate(8 64 32)" />
+        <circle cx="63" cy="30.8" r="1.2" fill="rgba(255,255,255,0.98)" />
+        <ellipse cx="28" cy="36" rx="6" ry="3.5" fill="rgba(255,190,200,0.32)" />
+        <ellipse cx="72" cy="36" rx="6" ry="3.5" fill="rgba(255,190,200,0.32)" />
+        <path d="M44 41 Q50 49 56 41" stroke="rgba(55,48,68,0.6)" stroke-width="0.95" fill="none" stroke-linecap="round" />
+    </svg>
+  </div>
+
+  <script>
+    var PUFFY_MSG = {
+      zh: { tickle: '嘻嘻别挠～好痒！', greet: '嗨～', intro: 'Hi，我叫 Puffy，你叫什么呀～', introBubble: '我是你的专属小精灵 Puffy，最爱你啦！', tapMe: '点我一下 有惊喜呦～', ariaLabel: '云朵小精灵' },
+      en: { tickle: 'Hey, that tickles! ~', greet: 'Hi there! ~', intro: "Hi, I'm Puffy. What's your name? ~", introBubble: "I'm your personal elf Puffy. I love you the most!", tapMe: 'Tap me for a surprise~', ariaLabel: 'Cloud spirit' }
+    };
+    var COPY = {
+      en: { headline: 'Where Mood Meets Aesthetic', tagline: 'Stillness in Style', beginBtn: 'Begin Journey', planBtn: "Today's Plan" },
+      zh: { headline: 'Where Mood Meets Aesthetic', tagline: 'Stillness in Style', beginBtn: '开始旅程', planBtn: '回看今日计划' }
+    };
+    function getLang() {
+      try {
+        var v = localStorage.getItem('repose.lang') || localStorage.getItem('repose_lang');
+        return v === 'zh' ? 'zh' : 'en';
+      } catch (e) { return 'en'; }
+    }
+    function setLang(lang) {
+      try {
+        localStorage.setItem('repose.lang', lang);
+        localStorage.setItem('repose_lang', lang);
+      } catch (e) {}
+      document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : 'en';
+      document.getElementById('langEN').setAttribute('aria-pressed', lang === 'en');
+      document.getElementById('langZH').setAttribute('aria-pressed', lang === 'zh');
+      var c = COPY[lang];
+      document.getElementById('headline').textContent = c.headline;
+      document.getElementById('tagline').textContent = c.tagline;
+      document.getElementById('beginBtn').textContent = c.beginBtn;
+      document.getElementById('planBtn').textContent = c.planBtn;
+      var wrap = document.getElementById('mascotWrap');
+      if (wrap) wrap.setAttribute('aria-label', PUFFY_MSG[lang].ariaLabel);
+      if (document.activeElement && document.activeElement.closest && document.activeElement.closest('.langSeg')) {
+        document.activeElement.blur();
+      }
+    }
+    var mascotClickCount = 0;
+    var puffyState = 'entering';
+    var sleepTimer = null;
+    function bindPuffy() {
+      var wrap = document.getElementById('mascotWrap');
+      var bubble = document.getElementById('mascotBubble');
+      if (!wrap || !bubble) return;
+      var lang = getLang();
+      var m = PUFFY_MSG[lang];
+      wrap.setAttribute('aria-label', m.ariaLabel);
+      function goToSleep() {
+        if (puffyState !== 'stopped') return;
+        puffyState = 'sleep';
+        wrap.classList.remove('stopped');
+        wrap.classList.add('sleep');
+      }
+      function wakeUp() {
+        if (sleepTimer) clearTimeout(sleepTimer);
+        sleepTimer = null;
+        puffyState = 'stopped';
+        wrap.classList.remove('sleep');
+        wrap.classList.add('stopped');
+        sleepTimer = setTimeout(goToSleep, 4000);
+      }
+      wrap.onclick = function() {
+        var curLang = getLang();
+        var curMsg = [PUFFY_MSG[curLang].tickle, PUFFY_MSG[curLang].greet, PUFFY_MSG[curLang].intro];
+        wrap.classList.add('tickle');
+        bubble.textContent = curMsg[mascotClickCount % 3];
+        mascotClickCount += 1;
+        bubble.classList.add('show');
+        setTimeout(function() { wrap.classList.remove('tickle'); }, 450);
+        setTimeout(function() { bubble.classList.remove('show'); }, 2200);
+        if (puffyState === 'stopped' || puffyState === 'sleep') wakeUp();
+      };
+      wrap.onkeydown = function(e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); wrap.click(); }
+      };
+      var autoBubbleSeqTimer = null;
+      function runAutoBubbleSequence() {
+        if (autoBubbleSeqTimer) return;
+        var steps = [
+          { text: m.introBubble, ms: 3500 },
+          { text: '🥰🥰🥰', ms: 3500 },
+          { text: m.tapMe, ms: 3500 }
+        ];
+        var idx = 0;
+        function showNext() {
+          if (idx >= steps.length) {
+            autoBubbleSeqTimer = null;
+            return;
+          }
+          bubble.textContent = steps[idx].text;
+          bubble.classList.add('show');
+          autoBubbleSeqTimer = setTimeout(function() {
+            bubble.classList.remove('show');
+            idx += 1;
+            autoBubbleSeqTimer = setTimeout(showNext, 320);
+          }, steps[idx].ms);
+        }
+        showNext();
+      }
+      wrap.addEventListener('animationend', function(e) {
+        if (e.animationName === 'puffyDriftFromLeft' || e.animationName === 'puffyDriftFromRight') {
+          puffyState = 'stopped';
+          wrap.classList.remove('idleFromLeft', 'idleFromRight');
+          wrap.classList.add('stopped');
+          wrap.style.left = '51%';
+          wrap.style.top = '21%';
+          sleepTimer = setTimeout(goToSleep, 4000);
+        }
+      });
+      var fromRight = Math.random() >= 0.5;
+      wrap.classList.add(fromRight ? 'enterFromRight' : 'enterFromLeft');
+      setTimeout(function() {
+        wrap.classList.remove('enterFromLeft', 'enterFromRight');
+        puffyState = 'idle';
+        wrap.classList.add(fromRight ? 'idleFromRight' : 'idleFromLeft');
+        runAutoBubbleSequence();
+      }, 2600);
+    }
+    bindPuffy();
+    (function initLang() {
+      var lang = getLang();
+      document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : 'en';
+      document.getElementById('langEN').setAttribute('aria-pressed', lang === 'en');
+      document.getElementById('langZH').setAttribute('aria-pressed', lang === 'zh');
+      var c = COPY[lang];
+      document.getElementById('headline').textContent = c.headline;
+      document.getElementById('tagline').textContent = c.tagline;
+      document.getElementById('beginBtn').textContent = c.beginBtn;
+      document.getElementById('planBtn').textContent = c.planBtn;
+    })();
+    document.getElementById('langEN').addEventListener('click', function() { setLang('en'); });
+    document.getElementById('langZH').addEventListener('click', function() { setLang('zh'); });
+
+    function goToQuiz() {
+      document.body.classList.add('fade-out');
+      setTimeout(function() { window.location.href = 'quiz.html'; }, 380);
+    }
+    var beginBtn = document.getElementById('beginBtn');
+    beginBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      goToQuiz();
+    });
+    beginBtn.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+        e.preventDefault();
+        goToQuiz();
+      }
+    });
+    function onEnterKey(e) {
+      var isEnter = (e.key === 'Enter' || e.key === '↵' || e.keyCode === 13);
+      if (!isEnter) return;
+      if (e.target && e.target.closest && e.target.closest('.langSeg')) return;
+      if (e.target && e.target.id === 'planBtn') return;
+      e.preventDefault();
+      e.stopPropagation();
+      goToQuiz();
+    }
+    document.addEventListener('keydown', onEnterKey, true);
+    window.addEventListener('keydown', onEnterKey, true);
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    }
+  </script>
+</body>
+</html>
