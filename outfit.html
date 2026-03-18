@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#F5E6DC">
+<title>REPOSE — 今日穿搭</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&family=Noto+Serif+SC:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rose:#6B4840;--sage:#8E9E8A;--blue:#7A8E9A;
+  --ink:#4A3830;--mid:#9A8070;--light:#C4A898;--rule:#E4D0C4;--off:#F5E6DC;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{font-family:'DM Mono',monospace;background:radial-gradient(ellipse at 50% 40%,#FDF6F0 0%,#F5E6DC 45%,#EDD4C8 100%);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;padding-bottom:72px;}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:52px;display:flex;align-items:center;justify-content:center;background:rgba(253,240,232,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--rule);}
+.nav-title{font-family:'DM Serif Display',serif;font-style:italic;font-size:17px;color:var(--rose)}
+.nav-back{position:absolute;left:20px;font-size:11px;color:var(--blue);cursor:pointer;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;}
+.lang-toggle{position:absolute;right:20px;font-size:9px;letter-spacing:.14em;color:var(--light);text-transform:uppercase;cursor:pointer;border:none;border-bottom:1px solid var(--rule);padding-bottom:1px;background:transparent;font-family:inherit;}
+
+.main{padding:68px 24px 24px;}
+
+/* CONTEXT PILLS */
+.context-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+.pill{font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border-radius:980px;border:1px solid var(--rule);color:var(--mid);background:rgba(255,255,255,.5);}
+.pill.scene{border-color:var(--blue);color:var(--blue);}
+.pill.weather{border-color:var(--sage);color:var(--sage);}
+.pill.mood{border-color:var(--rose);color:var(--rose);}
+
+/* HEADER */
+.page-eyebrow{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:8px;}
+.page-title{font-family:'DM Serif Display',serif;font-style:italic;font-size:36px;color:var(--rose);line-height:1.1;margin-bottom:24px;}
+
+/* LOADING */
+.loading-state{display:flex;flex-direction:column;align-items:center;gap:16px;padding:48px 0;}
+.loading-ring{width:36px;height:36px;border:1.5px solid var(--rule);border-top-color:var(--rose);border-radius:50%;animation:spin 1s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:11px;letter-spacing:.08em;color:var(--mid);text-align:center;line-height:1.8;}
+
+/* OUTFIT CARD */
+.outfit-card{background:rgba(255,255,255,.55);border:1px solid var(--rule);border-radius:20px;padding:22px;margin-bottom:16px;display:none;animation:fadeIn .5s ease both;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.outfit-card.visible{display:block;}
+
+.outfit-label{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:14px;}
+
+/* ITEMS LIST */
+.items-list{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.item-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--rule);}
+.item-row:last-child{border-bottom:none;}
+.item-icon{width:36px;height:36px;border-radius:10px;background:var(--off);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--mid);}
+.item-body{flex:1;}
+.item-type{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--light);margin-bottom:3px;}
+.item-name{font-size:13px;letter-spacing:.03em;color:var(--ink);margin-bottom:2px;}
+.item-note{font-size:10px;color:var(--mid);line-height:1.6;letter-spacing:.02em;}
+
+/* STYLING NOTES */
+.notes-block{background:rgba(107,72,64,.04);border-left:2px solid var(--rose);border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:20px;}
+.notes-label{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--rose);margin-bottom:8px;}
+.notes-text{font-size:12px;color:var(--ink);line-height:1.9;letter-spacing:.02em;}
+
+/* OCCASION NOTE */
+.occasion-block{font-size:11px;color:var(--mid);letter-spacing:.04em;line-height:1.8;text-align:center;padding:12px 0;border-top:1px solid var(--rule);margin-top:4px;}
+
+/* ACTIONS */
+.actions{display:flex;flex-direction:column;gap:10px;margin-top:8px;}
+.btn-primary{width:100%;padding:15px;border-radius:980px;background:var(--rose);color:rgba(253,240,232,.95);border:none;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .25s;}
+.btn-primary:hover{background:#5A3830;transform:scale(1.01);}
+.btn-secondary{width:100%;padding:13px;border-radius:980px;background:transparent;color:var(--mid);border:1px solid var(--rule);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:all .25s;}
+.btn-secondary:hover{border-color:var(--ink);color:var(--ink);}
+
+/* PLATFORM LINKS */
+.platforms-label{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:12px;margin-top:4px;}
+.platforms-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;}
+.platform-btn{display:flex;flex-direction:column;align-items:center;gap:7px;padding:14px 8px;background:rgba(255,255,255,.55);border:1px solid var(--rule);border-radius:14px;text-decoration:none;cursor:pointer;transition:all .2s;}
+.platform-btn:hover{border-color:var(--blue);background:rgba(255,255,255,.8);transform:translateY(-2px);}
+.platform-logo{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.platform-name{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);}
+.platform-desc{font-size:8px;color:var(--light);text-align:center;line-height:1.4;}
+
+/* ERROR */
+.error-state{display:none;text-align:center;padding:40px 0;}
+.error-text{font-size:12px;color:var(--mid);line-height:1.8;margin-bottom:20px;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:rgba(245,230,220,.96);backdrop-filter:blur(20px);border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom);z-index:100;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;text-decoration:none;color:var(--light);transition:color .2s;padding:6px 12px}
+.nav-item.active{color:var(--ink)}
+.nav-icon{width:22px;height:22px}
+.nav-label{font-size:8px;letter-spacing:.1em;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a class="nav-back" href="quiz.html" id="backBtn">← 返回</a>
+  <span class="nav-title">Today's Look</span>
+  <button class="lang-toggle" id="langBtn">中 / EN</button>
+</div>
+
+<div class="main">
+
+  <!-- CONTEXT PILLS -->
+  <div class="context-row" id="contextRow"></div>
+
+  <!-- HEADER -->
+  <div class="page-eyebrow" id="pageEyebrow">今日穿搭</div>
+  <div class="page-title" id="pageTitle">为你<br>精选搭配</div>
+
+  <!-- LOADING -->
+  <div class="loading-state" id="loadingState">
+    <div class="loading-ring"></div>
+    <div class="loading-text" id="loadingText">正在为你生成今日穿搭<br>稍等片刻…</div>
+  </div>
+
+  <!-- OUTFIT CARD -->
+  <div class="outfit-card" id="outfitCard">
+    <div class="outfit-label" id="outfitLabel">TODAY'S OUTFIT</div>
+    <div class="items-list" id="itemsList"></div>
+    <div class="notes-block">
+      <div class="notes-label" id="notesLabel">STYLE NOTES</div>
+      <div class="notes-text" id="notesText"></div>
+    </div>
+    <div class="occasion-block" id="occasionText"></div>
+  </div>
+
+  <!-- ERROR -->
+  <div class="error-state" id="errorState">
+    <div class="error-text" id="errorText">生成失败，请重试</div>
+    <button class="btn-secondary" onclick="loadOutfit()">重试</button>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions" id="actions" style="display:none">
+    <button class="btn-primary" onclick="regenerate()" id="regenBtn">换一套搭配</button>
+    <div style="margin-top:6px;">
+      <div class="platforms-label" id="platformsLabel">查看真实穿搭</div>
+      <div class="platforms-grid">
+        <a class="platform-btn" id="pinterestBtn" href="#" target="_blank">
+          <div class="platform-logo" style="background:#E60023;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.77 1.22-5.17 1.22-5.17s-.31-.62-.31-1.54c0-1.45.84-2.53 1.88-2.53.89 0 1.32.67 1.32 1.47 0 .9-.57 2.24-.87 3.48-.25 1.04.52 1.88 1.54 1.88 1.85 0 3.09-2.37 3.09-5.17 0-2.14-1.44-3.63-3.5-3.63-2.39 0-3.79 1.79-3.79 3.64 0 .72.28 1.49.62 1.91.07.08.08.15.06.23l-.23.95c-.04.15-.13.18-.29.11-1.09-.51-1.77-2.09-1.77-3.37 0-2.74 1.99-5.25 5.74-5.25 3.01 0 5.35 2.14 5.35 5.01 0 2.99-1.88 5.39-4.49 5.39-.88 0-1.7-.46-1.98-1l-.54 2.01c-.19.75-.72 1.69-1.08 2.26.81.25 1.67.39 2.56.39 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+          </div>
+          <div class="platform-name">Pinterest</div>
+          <div class="platform-desc" id="pinterestDesc">高质量图片</div>
+        </a>
+        <a class="platform-btn" id="xiaohongshuBtn" href="#" target="_blank">
+          <div class="platform-logo" style="background:#FF2442;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5" stroke="#FF2442" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="platform-name">小红书</div>
+          <div class="platform-desc" id="xhsDesc">中文穿搭</div>
+        </a>
+        <a class="platform-btn" id="vogueBtn" href="#" target="_blank">
+          <div class="platform-logo" style="background:#000;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M4 6l4 12 4-12 4 12 4-12" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          </div>
+          <div class="platform-name">Vogue</div>
+          <div class="platform-desc" id="vogueDesc">权威时尚</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<nav class="bottom-nav">
+  <a class="nav-item" href="index.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg><span class="nav-label">首页</span></a>
+  <a class="nav-item active" href="quiz.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg><span class="nav-label">今日</span></a>
+  <a class="nav-item" href="outfit.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2L8 6H5a1 1 0 00-1 1v12a1 1 0 001 1h14a1 1 0 001-1V7a1 1 0 00-1-1h-3L12 2z"/></svg><span class="nav-label">推荐</span></a>
+  <a class="nav-item" href="wardrobe.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg><span class="nav-label">衣橱</span></a>
+  <a class="nav-item" href="tryon.html"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 4h10l1 4H6L7 4z"/><path d="M6 8l-2 12h16L18 8"/><path d="M10 12h4"/></svg><span class="nav-label">试穿</span></a>
+</nav>
+
+<script>
+var lang = localStorage.getItem('repose.lang') || 'zh';
+var quiz = JSON.parse(localStorage.getItem('repose.quiz') || '{}');
+
+/* ── LABEL MAPS ── */
+var SCENE_ZH = {work:'工作',school:'上学',date:'约会',weekend:'周末',sport:'运动',party:'派对'};
+var SCENE_EN = {work:'Work',school:'School',date:'Date',weekend:'Weekend',sport:'Sport',party:'Party'};
+var WEATHER_ZH = {sunny:'晴天',cloudy:'多云',overcast:'阴天',rain:'下雨',cold:'寒冷',windy:'大风'};
+var WEATHER_EN = {sunny:'Sunny',cloudy:'Cloudy',overcast:'Overcast',rain:'Rainy',cold:'Cold',windy:'Windy'};
+var MOOD_ZH = {minimal:'降噪清晨',effortless:'慵懒午后',sharp:'独行时刻',luminous:'暮色序曲'};
+var MOOD_EN = {minimal:'Quiet Morning',effortless:'Sunday Vibe',sharp:'Focus Mode',luminous:'Evening Prelude'};
+
+/* ── ITEM ICONS ── */
+var ICONS = {
+  top: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M12 2L8 6H5a1 1 0 00-1 1v4h16V7a1 1 0 00-1-1h-3L12 2z"/><rect x="4" y="11" width="16" height="11" rx="1"/></svg>',
+  bottom: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M5 4h14l1 6H4L5 4z"/><path d="M4 10l2 10h5l1-6 1 6h5l2-10"/></svg>',
+  outer: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M12 3L8 6H4v14h4l4-3 4 3h4V6l-4-3-4 3z"/></svg>',
+  shoes: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M3 14l2-6h6l2 3h5a2 2 0 010 4H5a2 2 0 01-2-1z"/></svg>',
+  bag: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><rect x="4" y="8" width="16" height="13" rx="2"/><path d="M9 8V6a3 3 0 016 0v2"/></svg>',
+  accessory: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>',
+};
+
+function getIcon(type) {
+  var t = type.toLowerCase();
+  if (t.includes('上衣')||t.includes('衬衫')||t.includes('t恤')||t.includes('shirt')||t.includes('top')||t.includes('blouse')) return ICONS.top;
+  if (t.includes('裤')||t.includes('裙')||t.includes('下装')||t.includes('pant')||t.includes('skirt')||t.includes('bottom')||t.includes('trouser')) return ICONS.bottom;
+  if (t.includes('外套')||t.includes('大衣')||t.includes('jacket')||t.includes('coat')||t.includes('outer')) return ICONS.outer;
+  if (t.includes('鞋')||t.includes('靴')||t.includes('shoe')||t.includes('boot')||t.includes('sneaker')) return ICONS.shoes;
+  if (t.includes('包')||t.includes('bag')||t.includes('tote')) return ICONS.bag;
+  return ICONS.accessory;
+}
+
+/* ── BUILD CONTEXT PILLS ── */
+function buildPills() {
+  var row = document.getElementById('contextRow');
+  var zh = lang === 'zh';
+  var pills = [];
+  if (quiz.scene) pills.push({text: zh ? SCENE_ZH[quiz.scene] : SCENE_EN[quiz.scene], cls:'scene'});
+  if (quiz.weather) pills.push({text: zh ? WEATHER_ZH[quiz.weather] : WEATHER_EN[quiz.weather], cls:'weather'});
+  if (quiz.mood) pills.push({text: zh ? MOOD_ZH[quiz.mood] : MOOD_EN[quiz.mood], cls:'mood'});
+  row.innerHTML = pills.map(function(p){ return '<span class="pill '+p.cls+'">'+p.text+'</span>'; }).join('');
+}
+
+/* ── GENERATE OUTFIT ── */
+async function loadOutfit() {
+  document.getElementById('loadingState').style.display = 'flex';
+  document.getElementById('outfitCard').classList.remove('visible');
+  document.getElementById('errorState').style.display = 'none';
+  document.getElementById('actions').style.display = 'none';
+
+  var zh = lang === 'zh';
+  var scene = zh ? (SCENE_ZH[quiz.scene]||quiz.scene) : (SCENE_EN[quiz.scene]||quiz.scene);
+  var weather = zh ? (WEATHER_ZH[quiz.weather]||quiz.weather) : (WEATHER_EN[quiz.weather]||quiz.weather);
+  var mood = zh ? (MOOD_ZH[quiz.mood]||quiz.mood) : (MOOD_EN[quiz.mood]||quiz.mood);
+
+  var prompt = zh
+    ? `你是一位专业的时尚顾问。用户今天的情况：
+场景：${scene}
+天气：${weather}
+风格偏好：${mood}
+
+请推荐一套完整的今日穿搭。用严格的JSON格式回复，不要有任何其他文字：
+{
+  "items": [
+    {"type": "上衣", "name": "具体单品名称", "note": "一句话说明为什么选这个"},
+    {"type": "下装", "name": "具体单品名称", "note": "一句话说明"},
+    {"type": "鞋履", "name": "具体单品名称", "note": "一句话说明"},
+    {"type": "配件", "name": "具体单品名称", "note": "一句话说明"}
+  ],
+  "styleNote": "2-3句话的整体搭配风格说明，语气轻松时尚",
+  "occasion": "一句话说明这套搭配最适合的具体场合"
+}`
+    : `You are a professional fashion stylist. The user's situation today:
+Scene: ${scene}
+Weather: ${weather}
+Style preference: ${mood}
+
+Recommend a complete outfit. Reply ONLY in strict JSON, no other text:
+{
+  "items": [
+    {"type": "Top", "name": "specific item name", "note": "one sentence why"},
+    {"type": "Bottom", "name": "specific item name", "note": "one sentence why"},
+    {"type": "Shoes", "name": "specific item name", "note": "one sentence why"},
+    {"type": "Accessory", "name": "specific item name", "note": "one sentence why"}
+  ],
+  "styleNote": "2-3 sentence overall style description, light and fashion-forward",
+  "occasion": "one sentence on the ideal occasion for this outfit"
+}`;
+
+  try {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        messages: [{role: 'user', content: prompt}]
+      })
+    });
+
+    var data = await res.json();
+    var text = data.content && data.content[0] ? data.content[0].text : '';
+    var clean = text.replace(/```json|```/g, '').trim();
+    var outfit = JSON.parse(clean);
+
+    renderOutfit(outfit);
+
+  } catch(err) {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = 'block';
+    document.getElementById('errorText').textContent = zh
+      ? '生成失败，请检查网络后重试。'
+      : 'Failed to generate. Please check your connection and retry.';
+  }
+}
+
+function renderOutfit(outfit) {
+  document.getElementById('loadingState').style.display = 'none';
+
+  /* Items */
+  var list = document.getElementById('itemsList');
+  list.innerHTML = outfit.items.map(function(item) {
+    return '<div class="item-row">'
+      + '<div class="item-icon">'+getIcon(item.type)+'</div>'
+      + '<div class="item-body">'
+      + '<div class="item-type">'+item.type+'</div>'
+      + '<div class="item-name">'+item.name+'</div>'
+      + '<div class="item-note">'+item.note+'</div>'
+      + '</div></div>';
+  }).join('');
+
+  document.getElementById('notesText').textContent = outfit.styleNote;
+  document.getElementById('occasionText').textContent = outfit.occasion;
+
+  document.getElementById('outfitCard').classList.add('visible');
+  document.getElementById('actions').style.display = 'flex';
+}
+
+function regenerate() {
+  loadOutfit();
+}
+
+/* ── PLATFORM LINKS ── */
+var MOOD_KEYWORDS = {
+  minimal:    {en:'minimal aesthetic clean outfit', zh:'极简风穿搭'},
+  effortless: {en:'effortless casual chic outfit', zh:'慵懒休闲穿搭'},
+  sharp:      {en:'sharp structured power outfit', zh:'干练职场穿搭'},
+  luminous:   {en:'evening glam luminous outfit', zh:'高级感晚装穿搭'},
+};
+var SCENE_KEYWORDS = {
+  work:    {en:'office work outfit', zh:'职场穿搭'},
+  school:  {en:'campus student outfit', zh:'校园穿搭'},
+  date:    {en:'date night outfit', zh:'约会穿搭'},
+  weekend: {en:'weekend casual outfit', zh:'休闲周末穿搭'},
+  sport:   {en:'sporty athleisure outfit', zh:'运动穿搭'},
+  party:   {en:'party dinner outfit', zh:'聚会晚宴穿搭'},
+};
+
+function buildPlatformLinks() {
+  var moodKw = MOOD_KEYWORDS[quiz.mood] || {en:'fashion outfit', zh:'时尚穿搭'};
+  var sceneKw = SCENE_KEYWORDS[quiz.scene] || {en:'outfit', zh:'穿搭'};
+  var kwEn = encodeURIComponent(sceneKw.en + ' ' + moodKw.en);
+  var kwZh = encodeURIComponent(sceneKw.zh + ' ' + moodKw.zh);
+  document.getElementById('pinterestBtn').href = 'https://www.pinterest.com/search/pins/?q=' + kwEn;
+  document.getElementById('xiaohongshuBtn').href = 'https://www.xiaohongshu.com/search_result?keyword=' + kwZh + '&type=51';
+  document.getElementById('vogueBtn').href = 'https://www.vogue.com/search?q=' + encodeURIComponent(moodKw.en);
+}
+
+/* ── I18N ── */
+function applyLang(l) {
+  var zh = l === 'zh';
+  document.querySelector('.nav-title').textContent = "Today's Look";
+  document.getElementById('backBtn').textContent = zh ? '← 返回' : '← Back';
+  document.getElementById('langBtn').textContent = zh ? '中 / EN' : 'EN / 中';
+  document.getElementById('pageEyebrow').textContent = zh ? '今日穿搭' : "TODAY'S OUTFIT";
+  document.getElementById('pageTitle').innerHTML = zh ? '为你<br>精选搭配' : 'Your look<br>today';
+  document.getElementById('loadingText').innerHTML = zh ? '正在为你生成今日穿搭<br>稍等片刻…' : 'Generating your outfit<br>just a moment…';
+  document.getElementById('outfitLabel').textContent = "TODAY'S OUTFIT";
+  document.getElementById('notesLabel').textContent = 'STYLE NOTES';
+  document.getElementById('regenBtn').textContent = zh ? '换一套搭配' : 'Try another look';
+  document.getElementById('platformsLabel').textContent = zh ? '查看真实穿搭' : 'See real outfits';
+  document.getElementById('pinterestDesc').textContent = zh ? '高质量图片' : 'High-quality';
+  document.getElementById('xhsDesc').textContent = zh ? '中文穿搭' : 'Chinese style';
+  document.getElementById('vogueDesc').textContent = zh ? '权威时尚' : 'Fashion authority';
+  document.querySelectorAll('.nav-label').forEach(function(el, i) {
+    el.textContent = [zh?'首页':'Home', zh?'今日':'Today', zh?'推荐':'Outfits', zh?'衣橱':'Wardrobe', zh?'试穿':'Try On'][i];
+  });
+  buildPills();
+  buildPlatformLinks();
+}
+
+document.getElementById('langBtn').addEventListener('click', function() {
+  lang = lang === 'zh' ? 'en' : 'zh';
+  localStorage.setItem('repose.lang', lang);
+  applyLang(lang);
+  loadOutfit();
+});
+
+applyLang(lang);
+loadOutfit();
+</script>
+</body>
+</html>
